@@ -30,20 +30,8 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Copy custom nginx configuration (optional - nginx default config works for SPA)
 # COPY nginx.conf /etc/nginx/nginx.conf
 
-# Create a custom nginx configuration for SPA routing
-RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
-    echo '    listen 80;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    server_name localhost;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    root /usr/share/nginx/html;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    index index.html;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    location / {' >> /etc/nginx/conf.d/default.conf && \
-    echo '        try_files $uri $uri/ /index.html;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    }' >> /etc/nginx/conf.d/default.conf && \
-    echo '    location /static/ {' >> /etc/nginx/conf.d/default.conf && \
-    echo '        expires 1y;' >> /etc/nginx/conf.d/default.conf && \
-    echo '        add_header Cache-Control "public, immutable";' >> /etc/nginx/conf.d/default.conf && \
-    echo '    }' >> /etc/nginx/conf.d/default.conf && \
-    echo '}' >> /etc/nginx/conf.d/default.conf
+# COPY nginx.conf configuration file for SPA routing
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
