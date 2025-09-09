@@ -16,53 +16,78 @@ interface PaginationNavigationProps {
   onChange: (newPagination: NavigationState) => void
 }
 
-export const PaginationNavigation = memo(( props: PaginationNavigationProps) => {
 
-  const {skip, limit} = props.pagination
-  const totalPages = Math.ceil(props.totalObjects / limit)
-  const currentPage = skip / limit + 1
+export const PaginationNavigation = memo((props: PaginationNavigationProps) => {
+  const { skip, limit } = props.pagination;
+  const totalPages = Math.ceil(props.totalObjects / limit);
+  const currentPage = Math.floor(skip / limit) + 1;
+  const pageNumbers: (number | string)[] = [];
+
+  // Always show first page
+  if (totalPages > 0) pageNumbers.push(1);
+
+  // Show left ellipsis if needed
+  if (currentPage > 4) pageNumbers.push('left-ellipsis');
+
+  // Show two pages before current
+  for (let i = Math.max(2, currentPage - 2); i < currentPage; i++) {
+    pageNumbers.push(i);
+  }
+
+  // Show current page (if not first/last)
+  if (currentPage !== 1 && currentPage !== totalPages && totalPages > 1) {
+    pageNumbers.push(currentPage);
+  }
+
+  // Show two pages after current
+  for (let i = currentPage + 1; i <= Math.min(totalPages - 1, currentPage + 2); i++) {
+    pageNumbers.push(i);
+  }
+
+  // Show right ellipsis if needed
+  if (currentPage < totalPages - 3) pageNumbers.push('right-ellipsis');
+
+  // Always show last page (if more than one)
+  if (totalPages > 1) pageNumbers.push(totalPages);
 
   return (
-      <div className="pagination-navigation">
-        <button
-          disabled={skip <= 0}
-          onClick={() => {props.onChange({skip: skip-limit, limit: limit})}}
-        >
-          Prev page
-        </button>
+    <div className="pagination-navigation" style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
 
-        {/* Always show the first page */}
-        {currentPage > 1 && (
-          <>
-            <button onClick={() => props.onChange({skip: 0, limit: limit})}>1</button>
-            <button disabled>...</button>
-          </>
-        )}
+      <button
+        type="button"
+        disabled={currentPage === 1}
+        onClick={() => props.onChange({ skip: Math.max(0, skip - limit), limit })}
+      >
+        Prev
+      </button>
 
-        {/* Show a range of pages around the current page */}
-        {range(Math.max(currentPage - 1, 0), Math.min(currentPage + 1, totalPages)).map(i => (
+      {pageNumbers.map((num, idx) => {
+        if (typeof num === 'string' && num.includes('ellipsis')) {
+          return (
+            <span key={num + idx} style={{ padding: '0 4px' }}>…</span>
+          );
+        }
+        const isCurrent = num === currentPage;
+        return (
           <button
-            key={i}
-            disabled={i + 1 === currentPage}
-            onClick={() => props.onChange({skip: i * limit, limit: limit})}
+            type="button"
+            key={num}
+            disabled={isCurrent}
+            style={isCurrent ? { fontWeight: 'bold', background: '#e0e0e0' } : {}}
+            onClick={() => props.onChange({ skip: ((num as number) - 1) * limit, limit })}
           >
-            {i + 1}
+            {num}
           </button>
-        ))}
+        );
+      })}
 
-        {/* Always show the last page */}
-        {currentPage < totalPages - 2 && (
-          <>
-            <button disabled>...</button>
-            <button onClick={() => props.onChange({skip: (totalPages - 1) * limit, limit: limit})}>{totalPages}</button>
-          </>
-        )}
-
-        <button
-          disabled={(skip + limit) >= props.totalObjects}
-          onClick={() => props.onChange({skip: skip + limit, limit: limit})} >
-          Next page
-        </button>
-      </div>
-  )
-})
+      <button
+        type="button"
+        disabled={currentPage === totalPages || totalPages === 0}
+        onClick={() => props.onChange({ skip: Math.min(skip + limit, (totalPages - 1) * limit), limit })}
+      >
+        Next
+      </button>
+    </div>
+  );
+});
