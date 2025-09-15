@@ -36,10 +36,10 @@ docker-compose up --build -d
 
 The app will be available at http://localhost:80.
 
-# Structure
+### Structure
 event-list-react-docker/ — React app with Docker/Nginx deployment
 Other folders — Reserved for future DevOps, Kubernetes, and AWS automation experiments
 
-# License
+### License
 This repository is for personal learning and experimentation.
 
