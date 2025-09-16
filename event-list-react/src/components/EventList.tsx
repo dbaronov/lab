@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useReducer, useTransition, useCallback, useMemo } from 'react'
 import data from '../data/data.json'
 import { Event } from '../schema'
-import { TagFiltersSection } from '../components/tag-filters/TagFilters'
+import { TagFiltersSection } from './tag-filters/TagFilters'
 import { eventsFilter } from '../eventsFilter'
-import { TextSearch } from '../components/text-search/TextSearch'
-import RadioGroup from '../components/radio-group/RadioGroup'
-import Listing from '../components/listing/Listing'
-import { PaginationNavigation, NavigationState } from '../components/pagination/PaginationNavigation'
+import { TextSearch } from './text-search/TextSearch'
+import RadioGroup from './radio-group/RadioGroup'
+import Listing from './listing/Listing'
+import { PaginationNavigation, NavigationState } from './pagination/PaginationNavigation'
 import { produce } from 'immer'
 
 class EventListState {
